@@ -4,22 +4,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Генератор идей для постов</title>
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    })();
+  </script>
   <style>
     * {
       box-sizing: border-box;
+    }
+    :root {
+      --bg-gradient: linear-gradient(160deg, #f0f4ff 0%, #e8f0fe 45%, #fdf8ff 100%);
+      --text: #1a1a2e;
+      --text-heading: #16213e;
+      --text-muted: #4b5568;
+      --card-bg: #fff;
+      --card-border: rgba(99, 102, 241, 0.1);
+      --card-shadow: 0 4px 24px rgba(22, 33, 62, 0.07);
+      --divider: #eef0f7;
+      --strong: #1e293b;
+      --hint: #64748b;
+      --dd: #334155;
+      --em: #94a3b8;
+      --footer: #94a3b8;
+      --counter-bg: #eef2ff;
+      --counter-text: #6366f1;
+      --day-label: #8b5cf6;
+      --toggle-bg: #fff;
+      --toggle-border: rgba(99, 102, 241, 0.2);
+      --toggle-shadow: 0 2px 12px rgba(22, 33, 62, 0.08);
+      --toggle-hover: #f8fafc;
+    }
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(160deg, #0c0f18 0%, #141a2a 45%, #181528 100%);
+      --text: #e2e8f0;
+      --text-heading: #f1f5f9;
+      --text-muted: #94a3b8;
+      --card-bg: #1a2234;
+      --card-border: rgba(139, 92, 246, 0.25);
+      --card-shadow: 0 4px 28px rgba(0, 0, 0, 0.35);
+      --divider: rgba(148, 163, 184, 0.12);
+      --strong: #f1f5f9;
+      --hint: #94a3b8;
+      --dd: #cbd5e1;
+      --em: #64748b;
+      --footer: #64748b;
+      --counter-bg: rgba(99, 102, 241, 0.22);
+      --counter-text: #a5b4fc;
+      --day-label: #c4b5fd;
+      --toggle-bg: #1e2938;
+      --toggle-border: rgba(139, 92, 246, 0.35);
+      --toggle-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+      --toggle-hover: #263044;
     }
     body {
       margin: 0;
       min-height: 100vh;
       font-family: "Segoe UI", system-ui, sans-serif;
-      background: linear-gradient(160deg, #f0f4ff 0%, #e8f0fe 45%, #fdf8ff 100%);
-      color: #1a1a2e;
+      background: var(--bg-gradient);
+      color: var(--text);
       line-height: 1.55;
+      transition: background 0.35s ease, color 0.25s ease;
+    }
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.95rem;
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      background: var(--toggle-bg);
+      border: 1px solid var(--toggle-border);
+      border-radius: 999px;
+      box-shadow: var(--toggle-shadow);
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+    .theme-toggle:hover {
+      background: var(--toggle-hover);
+    }
+    .theme-toggle:active {
+      transform: scale(0.97);
+    }
+    .theme-toggle:focus-visible {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
+    [data-theme="dark"] .theme-toggle:focus-visible {
+      outline-color: #a78bfa;
     }
     main {
       max-width: 640px;
       margin: 0 auto;
-      padding: 2.25rem 1.25rem 3.5rem;
+      padding: 3.25rem 1.25rem 3.5rem;
     }
     .hero {
       text-align: center;
@@ -30,26 +114,30 @@
       font-weight: 700;
       margin: 0 0 0.4rem;
       letter-spacing: -0.03em;
-      color: #16213e;
+      color: var(--text-heading);
+      transition: color 0.25s ease;
     }
     .hero p {
       margin: 0;
       font-size: 0.95rem;
-      color: #4b5568;
+      color: var(--text-muted);
+      transition: color 0.25s ease;
     }
     section {
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 14px;
       padding: 1.35rem 1.35rem 1.2rem;
       margin-bottom: 1.15rem;
-      box-shadow: 0 4px 24px rgba(22, 33, 62, 0.07);
-      border: 1px solid rgba(99, 102, 241, 0.1);
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--card-border);
+      transition: background 0.3s ease, border-color 0.25s ease, box-shadow 0.3s ease;
     }
     h2 {
       font-size: 1.05rem;
       font-weight: 700;
       margin: 0 0 1rem;
-      color: #16213e;
+      color: var(--text-heading);
+      transition: color 0.25s ease;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -76,8 +164,9 @@
       counter-increment: idea;
       position: relative;
       padding: 0.65rem 0 0.65rem 2.35rem;
-      border-bottom: 1px solid #eef0f7;
+      border-bottom: 1px solid var(--divider);
       font-size: 0.98rem;
+      transition: border-color 0.25s ease;
     }
     ol.ideas li:last-child {
       border-bottom: none;
@@ -94,18 +183,21 @@
       text-align: center;
       font-size: 0.75rem;
       font-weight: 700;
-      color: #6366f1;
-      background: #eef2ff;
+      color: var(--counter-text);
+      background: var(--counter-bg);
       border-radius: 6px;
+      transition: color 0.25s ease, background 0.25s ease;
     }
     ol.ideas strong {
       display: block;
-      color: #1e293b;
+      color: var(--strong);
       margin-bottom: 0.2rem;
+      transition: color 0.25s ease;
     }
     ol.ideas span.hint {
       font-size: 0.88rem;
-      color: #64748b;
+      color: var(--hint);
+      transition: color 0.25s ease;
     }
     .week {
       display: grid;
@@ -117,8 +209,9 @@
       gap: 0.5rem 0.75rem;
       align-items: start;
       padding: 0.55rem 0;
-      border-bottom: 1px solid #eef0f7;
+      border-bottom: 1px solid var(--divider);
       font-size: 0.95rem;
+      transition: border-color 0.25s ease;
     }
     .day:last-child {
       border-bottom: none;
@@ -130,28 +223,43 @@
       font-size: 0.82rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: #8b5cf6;
+      color: var(--day-label);
+      transition: color 0.25s ease;
     }
     .day dd {
       margin: 0;
-      color: #334155;
+      color: var(--dd);
+      transition: color 0.25s ease;
     }
     .day dd em {
       display: block;
       font-style: normal;
       font-size: 0.86rem;
-      color: #94a3b8;
+      color: var(--em);
       margin-top: 0.15rem;
+      transition: color 0.25s ease;
     }
     footer {
       text-align: center;
       margin-top: 1.75rem;
       font-size: 0.82rem;
-      color: #94a3b8;
+      color: var(--footer);
+      transition: color 0.25s ease;
     }
   </style>
 </head>
 <body>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Переключить на тёмную тему">
+    <span aria-hidden="true">🌙</span> Тёмная тема
+  </button>
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      var tb = document.getElementById("theme-toggle");
+      tb.setAttribute("aria-pressed", "true");
+      tb.setAttribute("aria-label", "Переключить на светлую тему");
+      tb.innerHTML = '<span aria-hidden="true">☀️</span> Светлая тема';
+    }
+  </script>
   <main>
     <div class="hero">
       <h1>Генератор идей для постов</h1>
@@ -238,5 +346,33 @@
 
     <footer>Шаблон на каждый день не обязателен — главное, чтобы ритм вам был комфортен.</footer>
   </main>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById("theme-toggle");
+      var key = "theme";
+      function label(isDark) {
+        btn.setAttribute("aria-pressed", isDark ? "true" : "false");
+        btn.setAttribute(
+          "aria-label",
+          isDark ? "Переключить на светлую тему" : "Переключить на тёмную тему"
+        );
+        btn.innerHTML = isDark
+          ? '<span aria-hidden="true">☀️</span> Светлая тема'
+          : '<span aria-hidden="true">🌙</span> Тёмная тема';
+      }
+      function setTheme(isDark) {
+        if (isDark) root.setAttribute("data-theme", "dark");
+        else root.removeAttribute("data-theme");
+        label(isDark);
+      }
+      setTheme(localStorage.getItem(key) === "dark");
+      btn.addEventListener("click", function () {
+        var nextDark = root.getAttribute("data-theme") !== "dark";
+        localStorage.setItem(key, nextDark ? "dark" : "light");
+        setTheme(nextDark);
+      });
+    })();
+  </script>
 </body>
 </html>
