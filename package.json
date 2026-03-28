@@ -1,0 +1,8 @@
+{
+  "name": "generator-idei-postov",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve . -l 5173",
+    "start:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File ./start-server.ps1"
+  }
+}
